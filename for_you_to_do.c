@@ -19,11 +19,12 @@
 int mydgetrf(double *A, int *ipiv, int n) 
 {
     /* add your code here */
+    int i;
     for (i = 0; i < n; i++)
     {
         // pivoting
-        maxIndex = i;
-        max = fabs(A[i*n + i]);
+        int maxIndex = i;
+        int max = fabs(A[i*n + i]);
         
         int j;
         for (j = i+1; j < n; j++)
@@ -145,66 +146,69 @@ void mydgemm(double *A, double *B, double *C, int n, int i, int j, int k, int b)
 {
     /* add your code here */
     /* please just copy from your lab1 function optimal( ... ) */
-    int i1 = i, j1 = j, k1 = k;
-    int ni = i + b > n ? n : i + b;
-    int nj = j + b > n ? n : j + b;
-    int nk = k + b > n ? n : k + b;
+    for (int i = 0; i < n; i += b) {
+        for (int j = 0; j < n; j += b) {
+            for (int k = 0; k < n; k += b) {
+                int i1 = i, j1 = j, k1 = k;
+                int ni = i + b > n ? n : i + b;
+                int nj = j + b > n ? n : j + b;
+                int nk = k + b > n ? n : k + b;
 
-    for (i1 = i; i1 < ni; i1 += 3)
-    {
-        for (j1 = j; j1 < nj; j1 += 3)
-        {
-            int t = i1 * n + j1;
-            int tt = t + n;
-            int ttt = tt + n;
-            register double c00 = C[t];
-            register double c01 = C[t + 1];
-            register double c02 = C[t + 2];
-            register double c10 = C[tt];
-            register double c11 = C[tt + 1];
-            register double c12 = C[tt + 2];
-            register double c20 = C[ttt];
-            register double c21 = C[ttt + 1];
-            register double c22 = C[ttt + 2];
+                for (i1 = i; i1 < ni; i1 += 3) {
+                    for (j1 = j; j1 < nj; j1 += 3) {
+                        int h = i1 * n + j1;
+                        int hh = h + n;
+                        int hhh = hh + n;
+                        register double c00 = C[h];
+                        register double c01 = C[h + 1];
+                        register double c02 = C[h + 2];
+                        register double c10 = C[hh];
+                        register double c11 = C[hh + 1];
+                        register double c12 = C[hh + 2];
+                        register double c20 = C[hhh];
+                        register double c21 = C[hhh + 1];
+                        register double c22 = C[hhh + 2];
 
-            for (k1 = k; k1 < nk; k1 += 3)
-            {
-		int l;
-                for (l = 0; l < 3; l++)
-                {
-                    int ta = i1 * n + k1 + l;
-                    int tta = ta + n;
-                    int ttta = tta + n;
-                    int tb = k1 * n + j1 + l * n;
-                    register double a0 = A[ta];
-                    register double a1 = A[tta];
-                    register double a2 = A[ttta];
-                    register double b0 = B[tb];
-                    register double b1 = B[tb + 1];
-                    register double b2 = B[tb + 2];
+                        for (k1 = k; k1 < nk; k1 += 3) {
+                            for (int l = 0; l < 3; l++) {
+                                int ha = i1 * n + k1 + l;
+                                int hha = ha + n;
+                                int hhha = hha + n;
+                                int hb = k1 * n + j1 + l * n;
+                                register double a0 = A[ha];
+                                register double a1 = A[hha];
+                                register double a2 = A[hhha];
+                                register double b0 = B[hb];
+                                register double b1 = B[hb + 1];
+                                register double b2 = B[hb + 2];
 
-                    c00 -= a0 * b0;
-                    c01 -= a0 * b1;
-                    c02 -= a0 * b2;
-                    c10 -= a1 * b0;
-                    c11 -= a1 * b1;
-                    c12 -= a1 * b2;
-                    c20 -= a2 * b0;
-                    c21 -= a2 * b1;
-                    c22 -= a2 * b2;
+                                c00 += a0 * b0;
+                                c01 += a0 * b1;
+                                c02 += a0 * b2;
+                                c10 += a1 * b0;
+                                c11 += a1 * b1;
+                                c12 += a1 * b2;
+                                c20 += a2 * b0;
+                                c21 += a2 * b1;
+                                c22 += a2 * b2;
+                            }
+                        }
+                        C[h] = c00;
+                        C[h + 1] = c01;
+                        C[h + 2] = c02;
+                        C[hh] = c10;
+                        C[hh + 1] = c11;
+                        C[hh + 2] = c12;
+                        C[hhh] = c20;
+                        C[hhh + 1] = c21;
+                        C[hhh + 2] = c22;
+
+                    }
                 }
             }
-            c[t] = c00;
-            c[t + 1] = c01;
-            c[t + 2] = c02;
-            c[tt] = c10;
-            c[tt + 1] = c11;
-            c[tt + 2] = c12;
-            c[ttt] = c20;
-            c[ttt + 1] = c21;
-            c[ttt + 2] = c22;
         }
     }
+
     return;
 }
 
