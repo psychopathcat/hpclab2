@@ -147,9 +147,9 @@ void mydgemm(double *A, double *B, double *C, int n, int i, int j, int k, int b)
     /* add your code here */
     /* please just copy from your lab1 function optimal( ... ) */
     int i1 = i, j1 = j, k1 = k;
-    int ni = i + blocksize > n ? n : i + blocksize;
-    int nj = j + blocksize > n ? n : j + blocksize;
-    int nk = k + blocksize > n ? n : k + blocksize;
+    int ni = i + b > n ? n : i + b;
+    int nj = j + b > n ? n : j + b;
+    int nk = k + b > n ? n : k + b;
 
     for (i1 = i; i1 < ni; i1 += 3)
     {
@@ -158,15 +158,15 @@ void mydgemm(double *A, double *B, double *C, int n, int i, int j, int k, int b)
             int t = i1 * n + j1;
             int tt = t + n;
             int ttt = tt + n;
-            register double c00 = c[t];
-            register double c01 = c[t + 1];
-            register double c02 = c[t + 2];
-            register double c10 = c[tt];
-            register double c11 = c[tt + 1];
-            register double c12 = c[tt + 2];
-            register double c20 = c[ttt];
-            register double c21 = c[ttt + 1];
-            register double c22 = c[ttt + 2];
+            register double c00 = C[t];
+            register double c01 = C[t + 1];
+            register double c02 = C[t + 2];
+            register double c10 = C[tt];
+            register double c11 = C[tt + 1];
+            register double c12 = C[tt + 2];
+            register double c20 = C[ttt];
+            register double c21 = C[ttt + 1];
+            register double c22 = C[ttt + 2];
 
             for (k1 = k; k1 < nk; k1 += 3)
             {
@@ -177,12 +177,12 @@ void mydgemm(double *A, double *B, double *C, int n, int i, int j, int k, int b)
                     int tta = ta + n;
                     int ttta = tta + n;
                     int tb = k1 * n + j1 + l * n;
-                    register double a0 = a[ta];
-                    register double a1 = a[tta];
-                    register double a2 = a[ttta];
-                    register double b0 = b[tb];
-                    register double b1 = b[tb + 1];
-                    register double b2 = b[tb + 2];
+                    register double a0 = A[ta];
+                    register double a1 = A[tta];
+                    register double a2 = A[ttta];
+                    register double b0 = B[tb];
+                    register double b1 = B[tb + 1];
+                    register double b2 = B[tb + 2];
 
                     c00 -= a0 * b0;
                     c01 -= a0 * b1;
